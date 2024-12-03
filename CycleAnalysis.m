@@ -2,6 +2,10 @@
 
 C = Constants
 
+%% Design Point Analysis
+% Alt. Properties
+[~, T0, P0, rho0, g0, ~, ~, ~, a0] = AtmModel(C.Alt)
+
 %% Inlet
 
 %% Compressor
