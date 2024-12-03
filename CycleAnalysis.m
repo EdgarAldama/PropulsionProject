@@ -13,7 +13,7 @@ gamma = 1.4
 %% Freestream
 Tt0 = T0 * (1+(gamma-1)/2 * M0^2); % Calculate Total Temp
 Pt0 = P0 * (1+(gamma-1)/2 * M0^2)^(gamma/(gamma-1)); % Calculate Total Pressure
-
+V0 = a0*M0; 
 %% Inlet
 
 %% Compressor
