@@ -1,0 +1,77 @@
+close all; clear; clc;
+
+%% Constants
+C = Constants;
+gamma_c = 1.4;
+
+%% Design Parameters
+pi_d % Total Pressure ratio across inlet
+pi_c % Total Pressure ratio across compressor
+ec % Polytropic efficiency of compressor
+pi_b % Total Pressure ratio across burner
+tau_b % Total Temperature ratio across burner
+cpc % Specific heat at constant pressure of air ahead of burner
+cpt % Specific heat at constant pressure of air after burner
+hr % Low heating value of fuel at burner
+eta_b % combustion efficiency in burner
+gamma_t % specific heat ratio of air after burner
+eta_m % mechanical efficiency of turbine - compressor power shaft
+et % polytropic efficiency of turbine
+cpab % Specific heat at constant pressure of air after afterburner
+tau_ab % Total temperature ratio across afterburner
+pi_ab % Total pressure ratio across afterburner
+hrab % Low heating value of fuel at afterburner
+eta_ab % combustion efficiency in afterburner
+gamma_ab % specific heat ratio of air after afterburner
+pi_n % Total pressure ratio across nozzle
+P_ratio % Static pressure ratio of exit and inlet (P9 / P0)
+
+%% Freestream
+[~,To,Po,rho,~,~,~,~,ao] = AtmModel(H);
+Tto = To * (1 + (gamma_c - 1) / 2 * Mo^2);
+Pto = Po * (1 + (gamma_c - 1) / 2 * Mo^2)^(gamma_c / (gamma_c - 1));
+Vo = Mo * ao;
+pi_r = Pto / Po;
+tau_r = Tto / To;
+
+%% Inlet
+Tt2 = Tto;
+Pt2 = Pto * pi_d;
+
+%% Compressor
+Pt3 = Pt2 * pi_c;
+tau_c = pi_c^((gamma_c - 1) / (gamma_c *ec));
+Tt3 = Tt2 * tau_c;
+
+%% Burner
+Pt4 = Pt3 * pi_b;
+Tt4 = Tt3 * tau_b;
+f = (cpt * Tt4 - cpc * Tt3) / ((hr * eta_b) - cpt * Tt4);
+
+%% Turbine
+tau_t = 1 - (cpc * Tt2) / (eta_m * (1 + f) * cpt * Tt4) * (tau_c - 1);
+pi_t = tau_t^(gamma_t / ((gamma_t - 1) * et));
+Pt5 = Pt4 * pi_t;
+Tt5 = Tt4 * tau_t;
+
+%% Afterburner
+Tt7 = Tt5 * tau_ab;
+Pt7 = Pt5 * pi_ab;
+fab = (1 + f) * (cpab * Tt7 - cpt * Tt5) / ((hrab * eta_ab) - cpab * Tt7);
+
+%% Nozzle
+Tt9 = Tt7;
+Pt9 = Pt7 * pi_n;
+P9 = P_ratio * Po;
+M9 = sqrt(2 / (gamma_ab - 1) * ((Pt9 / P9)^(gamma_ab / (gamma_ab - 1)) - 1));
+T9 = Tt9 / (1 + (gamma_ab - 1) / 2 * M9^2);
+a9 = sqrt((gamma_ab - 1) * cpab * T9);
+V9 = M9 * a9;
+
+%% Performance
+Fm = ((1 + f + fab) * V9 - Vo) + (P9 - Po) * A9;
+S = (f + fab) / Fm;
+W = 1 / 2 * ((1 + f + fab) * V9^2 - Vo^2);
+eta_p = Fm * Vo / W;
+eta_th = W / (f * hr + fab * hrab);
+eta_o = eta_th * eta_p;
