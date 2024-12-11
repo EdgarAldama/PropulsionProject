@@ -17,12 +17,12 @@ eta_b % combustion efficiency in burner
 gamma_t % specific heat ratio of air after burner
 eta_m % mechanical efficiency of turbine - compressor power shaft
 et % polytropic efficiency of turbine
-cpab % Specific heat at constant pressure of air after afterburner
-tau_ab % Total temperature ratio across afterburner
-pi_ab % Total pressure ratio across afterburner
-hrab % Low heating value of fuel at afterburner
-eta_ab % combustion efficiency in afterburner
-gamma_ab % specific heat ratio of air after afterburner
+cpab = 1150; % [J/kg*K] Specific heat at constant pressure of air after afterburner
+tau_ab = 1.4 %[-] Total temperature ratio across afterburner 
+pi_ab = 0.95 % [-] Total pressure ratio across afterburner 
+hrab =42.8e6 % [MJ/kg] Low heating value of fuel at afterburner 
+eta_ab = 0.99 %[-] combustion efficiency in afterburner 
+gamma_ab = 1.3 %[-] specific heat ratio of air after afterburner 
 pi_n % Total pressure ratio across nozzle
 P_ratio % Static pressure ratio of exit and inlet (P9 / P0)
 
